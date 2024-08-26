@@ -1,11 +1,26 @@
-This is a Kotlin Multiplatform project targeting Desktop.
+# Chess Game
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+Just an exercise
 
+## Usage
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+main.kt launches the game
+
+```bash
+place holder
+```
+
+## Version
+
+- 1.0: Basic board setup and piece movement.  Starting positions rendered using FEN.
+
+## Notes
+```
+echo "# Chess" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/LithiumLogos/Chess.git
+git push -u origin main"
+```
