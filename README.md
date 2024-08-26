@@ -4,15 +4,16 @@ Just an exercise
 
 ## Usage
 
-main.kt launches the game
+main.kt
 
 ```bash
-place holder
+./gradlew run
 ```
 
 ## Version
 
-- 1.0: Basic board setup and piece movement.  Starting positions rendered using FEN.
+- 1.0.1: Added FEN encoder and tests, along with extra support for FEN.  Added UI and basic Api calling.
+- 1.0.0: Basic board setup and piece movement.  Starting positions rendered using FEN.
 
 ## Notes
 ```
@@ -24,3 +25,5 @@ git branch -M main
 git remote add origin https://github.com/LithiumLogos/Chess.git
 git push -u origin main"
 ```
+
+- UI Extension: [Voyager](https://voyager.adriel.cafe/)

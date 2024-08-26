@@ -12,16 +12,19 @@ import androidx.compose.ui.unit.IntOffset
 import com.lithiumlogos.chess.pieces.Piece
 
 @Composable
-fun rememberBoard(): Board = remember { Board() }
+fun rememberBoard(fenString: String = DEFAULT_FEN_SETUP): Board =
+    remember { Board(fenString) }
 
 @Immutable
-class Board {
+class Board(val fenString: String) {
     private val _pieces = mutableStateListOf<Piece>()
     val pieces get() = _pieces.toList()
+    val setup = fenString.ifBlank { DEFAULT_FEN_SETUP }
 
     init {
-        val defaultSetup = decode(DEFAULT_FEN_SETUP)
-        defaultSetup.forEach { piece -> _pieces.add(piece) }
+        decode(setup).forEach { piece -> _pieces.add(piece) }
+
+        var playerTurn = getCurrentTurn(setup)
     }
 
     var selectedPiece by mutableStateOf<Piece?>(null)
@@ -33,7 +36,10 @@ class Board {
     var moveIncrementAction by mutableIntStateOf(0)
         private set
 
-    var playerTurn by mutableStateOf(Piece.Color.White)
+    var playerTurn by mutableStateOf(getCurrentTurn(setup))
+
+
+    var currentFEN by mutableStateOf(encode(pieces, playerTurn))
 
     /*
         User Events
@@ -64,7 +70,8 @@ class Board {
 
             movePiece(piece = piece, position = IntOffset(x, y))
             clearSelection()
-            switchPlayerTurn()
+            switchPlayerTurn(currentFEN)
+            updateFenString(pieces, playerTurn)
             moveIncrementAction++
 
         }
@@ -80,6 +87,11 @@ class Board {
     /*
         Private Methods
      */
+
+    private fun getCurrentTurn(currentFEN: String): Piece.Color {
+        val turnString = currentFEN.split(' ')[1]
+        return if (turnString == "w") Piece.Color.White else Piece.Color.Black
+    }
 
     private fun movePiece(piece: Piece, position: IntOffset) {
         val targetPiece = pieces.find { it.position == position }
@@ -100,11 +112,16 @@ class Board {
         selectedPieceMoves = emptySet()
     }
 
-    private fun switchPlayerTurn() {
+    private fun switchPlayerTurn(currentFEN: String) {
+        val turnString = currentFEN.split(' ')[1]
         playerTurn =
-        if (playerTurn.isWhite) {
+        if (turnString == "w") {
             Piece.Color.Black
         } else { Piece.Color.White }
+    }
+
+    private fun updateFenString(pieces: List<Piece>, playerTurn: Piece.Color ) {
+        currentFEN = encode(pieces, playerTurn)
     }
 
 

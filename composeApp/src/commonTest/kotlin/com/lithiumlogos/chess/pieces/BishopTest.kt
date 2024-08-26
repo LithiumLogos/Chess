@@ -1,7 +1,10 @@
 package com.lithiumlogos.chess.pieces
 
 import androidx.compose.ui.unit.IntOffset
+import com.lithiumlogos.chess.board.BoardXCoordinates
 import com.lithiumlogos.chess.board.BoardYCoordinates
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -17,15 +20,6 @@ class BishopTest {
         color = Piece.Color.Black,
         position = IntOffset(x = 'C'.code, y = 8)
     )
-
-    @Test
-    fun random() {
-        val eight = BoardYCoordinates[0]
-        val seven = BoardYCoordinates[1]
-
-        assertTrue(eight == 1)
-        assertTrue(seven == 7)
-    }
 
     @Test
     fun testFreeMovement() {

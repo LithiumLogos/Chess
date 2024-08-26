@@ -1,13 +1,12 @@
 import org.gradle.api.tasks.testing.Test
-import org.gradle.api.tasks.testing.TestDescriptor
-import org.gradle.api.tasks.testing.TestListener
-import org.gradle.api.tasks.testing.TestResult
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.testLogger)
+    alias(libs.plugins.kotlinxSerialization)
 }
 
 kotlin {
@@ -19,17 +18,27 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material)
+            implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
+
+            // Api Requests
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.cio)
+
+            // Fancy UI
+            implementation(libs.voyager.navigator)
+            implementation(libs.voyager.transitions)
+
         }
 
         commonTest.dependencies {
-            implementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
-            runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.3")
+            implementation(kotlin("test"))
         }
 
         desktopMain.dependencies {
@@ -47,6 +56,10 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.lithiumlogos.chess"
             packageVersion = "1.0.0"
+
+            windows {
+                iconFile.set(project.file("composeApp/src/commonMain/composeResources/drawable/icon.ico"))
+            }
         }
     }
 }
@@ -58,29 +71,4 @@ tasks.named("build") {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-
-    addTestListener(object : TestListener {
-        override fun beforeSuite(suite: TestDescriptor) {
-            // Optional: Print the name of the suite
-            if (suite.parent == null) { // Root suite
-                println("Running tests in: ${suite.displayName}")
-            }
-        }
-
-        override fun afterSuite(suite: TestDescriptor, result: TestResult) {
-            if (suite.parent == null) { // Root suite
-                println("Tests finished. ${result.testCount} tests run, ${result.successfulTestCount} succeeded, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped.")
-            }
-        }
-
-        override fun beforeTest(descriptor: TestDescriptor) {
-            // Optional: Print the name of each test before it runs
-            println("Running test: ${descriptor.displayName}")
-        }
-
-        override fun afterTest(descriptor: TestDescriptor, result: TestResult) {
-            // Optional: Print the result of each test after it runs
-            println("Test ${descriptor.displayName} ${result.resultType}.")
-        }
-    })
 }
