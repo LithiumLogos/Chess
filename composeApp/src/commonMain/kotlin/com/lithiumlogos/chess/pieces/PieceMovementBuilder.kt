@@ -2,15 +2,27 @@ package com.lithiumlogos.chess.pieces
 
 import androidx.compose.ui.unit.IntOffset
 
-fun Piece.getPieceMoves(pieces: List<Piece>, block: PieceMovementBuilder.() -> Unit): Set<IntOffset> {
-    val builder = PieceMovementBuilder(piece = this, pieces = pieces)
+fun Piece.getPieceMoves(pieces: List<Piece>, fenString: String, block: PieceMovementBuilder.() -> Unit): Set<IntOffset> {
+    val builder = PieceMovementBuilder(piece = this, pieces = pieces, fenString = fenString)
     builder.block()
 
     return builder.build()
 }
 
-class PieceMovementBuilder(private val piece: Piece, private val pieces: List<Piece>) {
+class PieceMovementBuilder(private val piece: Piece, private val pieces: List<Piece>, private val fenString: String) {
     private val moves = mutableSetOf<IntOffset>()
+
+    fun castleMoves(
+        fenString: String
+    ) {
+        moves.addAll(
+            piece.getCastleMoves(
+                pieces = pieces,
+                fenString = fenString
+            )
+        )
+    }
+
 
     fun straightMoves(
         canCapture: Boolean = true,

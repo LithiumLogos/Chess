@@ -22,8 +22,76 @@ interface Piece {
     val drawable: DrawableResource
     var position: IntOffset
     val type: Char
+    var hasMoved: Boolean
 
-    fun getAvailableMoves(pieces: List<Piece>): Set<IntOffset>
+    fun getAvailableMoves(pieces: List<Piece>, fenString: String): Set<IntOffset>
+}
+
+fun Piece.getCastleMoves(
+    pieces: List<Piece>,
+    fenString: String
+) : Set<IntOffset> {
+    val moves = mutableSetOf<IntOffset>()
+
+    // "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+
+    val availableCastles = fenString.split(' ')[2]
+    val offsets = mutableListOf<IntOffset>()
+
+    if (availableCastles == "-") {
+        return moves
+    }
+
+    if (color == Piece.Color.White) {
+        if (availableCastles.contains('K')) {
+            val targetPosition = this.position + IntOffset(2, 0)
+            val targetRookPos = this.position + IntOffset(1, 0)
+
+            if (castleCheck(pieces, targetPosition, targetRookPos)) {
+                moves.add(targetPosition)
+            }
+        }
+
+        if (availableCastles.contains('Q')) {
+            val targetPosition = this.position + IntOffset(-2, 0)
+            val targetRookPos = this.position + IntOffset(-1, 0)
+
+            if (castleCheck(pieces, targetPosition, targetRookPos)) {
+                moves.add(targetPosition)
+            }
+        }
+    }
+
+    if (color == Piece.Color.Black) {
+        if (availableCastles.contains('k')) {
+            val targetPosition = this.position + IntOffset(2, 0)
+            val targetRookPos = this.position + IntOffset(1, 0)
+
+            if (castleCheck(pieces, targetPosition, targetRookPos)) {
+                moves.add(targetPosition)
+            }
+        }
+    }
+
+    if (color == Piece.Color.Black) {
+        if (availableCastles.contains('q')) {
+            val targetPosition = this.position + IntOffset(-2, 0)
+            val targetRookPos = this.position + IntOffset(-1, 0)
+
+            if (castleCheck(pieces, targetPosition, targetRookPos)) {
+                moves.add(targetPosition)
+            }
+        }
+    }
+
+    return moves
+}
+
+private fun castleCheck(pieces: List<Piece>, targetPosition: IntOffset, targetRookPos: IntOffset): Boolean {
+    val targetOne = pieces.find { it.position == targetPosition }
+    val targetTwo = pieces.find { it.position == targetRookPos }
+
+    return targetOne == null && targetTwo == null
 }
 
 enum class StraightMovement {
@@ -90,7 +158,8 @@ fun Piece.getMoves(
     getPosition: (Int) -> IntOffset,
     canCapture: Boolean = true,
     captureOnly: Boolean = false,
-    maxMovements: Int = 7
+    maxMovements: Int = 7,
+    fenString: String = ""
 ) : Set<IntOffset> {
     val moves = mutableSetOf<IntOffset>()
 

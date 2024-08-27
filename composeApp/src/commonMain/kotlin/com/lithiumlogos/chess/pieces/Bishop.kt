@@ -10,6 +10,8 @@ class Bishop (
     override val color: Piece.Color,
     override var position: IntOffset
 ): Piece {
+    override var hasMoved: Boolean = false
+
     override val type:Char = Type
 
     override val drawable: DrawableResource =
@@ -18,10 +20,10 @@ class Bishop (
         else
             Res.drawable.bishop_Black
 
-    override fun getAvailableMoves(pieces: List<Piece>): Set<IntOffset> {
+    override fun getAvailableMoves(pieces: List<Piece>, fenString: String): Set<IntOffset> {
 
 
-        return getPieceMoves(pieces) {
+        return getPieceMoves(pieces, fenString) {
             diagonalMoves()
         }
     }

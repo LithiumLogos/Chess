@@ -18,8 +18,8 @@ class RookTest {
 
     @Test
     fun testFreeMovement() {
-        val movesWhite = whiteRook.getAvailableMoves(listOf(whiteRook))
-        val movesBlack = blackRook.getAvailableMoves(listOf(blackRook))
+        val movesWhite = whiteRook.getAvailableMoves(listOf(whiteRook), "")
+        val movesBlack = blackRook.getAvailableMoves(listOf(blackRook), "")
 
         assertEquals(14, movesWhite.size)
         assertTrue(IntOffset(x = 'A'.code, y = 8) in movesWhite)
@@ -61,8 +61,8 @@ class RookTest {
             blackPawnTwo
         )
 
-        val movesWhite = whiteRook.getAvailableMoves(pieces)
-        val movesBlack = blackRook.getAvailableMoves(pieces)
+        val movesWhite = whiteRook.getAvailableMoves(pieces, "")
+        val movesBlack = blackRook.getAvailableMoves(pieces, "")
 
         assertTrue(movesWhite.isEmpty())
         assertTrue(movesBlack.isEmpty())
@@ -87,8 +87,8 @@ class RookTest {
             blackPawnEnemy
         )
 
-        val movesWhite = whiteRook.getAvailableMoves(pieces)
-        val movesBlack = blackRook.getAvailableMoves(pieces)
+        val movesWhite = whiteRook.getAvailableMoves(pieces, "")
+        val movesBlack = blackRook.getAvailableMoves(pieces, "")
 
         assertTrue(movesWhite.contains(blackPawnEnemy.position))
         assertTrue(movesBlack.contains(whitePawnEnemy.position))

@@ -18,8 +18,8 @@ class KnightTest {
 
     @Test
     fun testFreeMovement() {
-        val movesWhite = whiteKnight.getAvailableMoves(listOf(whiteKnight))
-        val movesBlack = blackKnight.getAvailableMoves(listOf(blackKnight))
+        val movesWhite = whiteKnight.getAvailableMoves(listOf(whiteKnight), "")
+        val movesBlack = blackKnight.getAvailableMoves(listOf(blackKnight), "")
 
         assertEquals(3, movesWhite.size)
         assertTrue(IntOffset(x = 'A'.code, y = 3) in movesWhite)
@@ -75,8 +75,8 @@ class KnightTest {
             blackPawnThree
         )
 
-        val movesWhite = whiteKnight.getAvailableMoves(pieces)
-        val movesBlack = blackKnight.getAvailableMoves(pieces)
+        val movesWhite = whiteKnight.getAvailableMoves(pieces, "")
+        val movesBlack = blackKnight.getAvailableMoves(pieces, "")
 
         assertTrue(movesWhite.isEmpty())
         assertTrue(movesBlack.isEmpty())
@@ -103,8 +103,8 @@ class KnightTest {
             blackPawnEnemy
         )
 
-        val movesWhite = whiteKnight.getAvailableMoves(pieces)
-        val movesBlack = blackKnight.getAvailableMoves(pieces)
+        val movesWhite = whiteKnight.getAvailableMoves(pieces, "")
+        val movesBlack = blackKnight.getAvailableMoves(pieces, "")
 
         assertTrue(movesWhite.contains(blackPawnEnemy.position))
         assertTrue(movesBlack.contains(whitePawnEnemy.position))

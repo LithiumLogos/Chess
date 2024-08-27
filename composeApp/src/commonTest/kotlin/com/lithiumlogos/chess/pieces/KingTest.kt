@@ -1,6 +1,7 @@
 package com.lithiumlogos.chess.pieces
 
 import androidx.compose.ui.unit.IntOffset
+import com.lithiumlogos.chess.board.DEFAULT_FEN_SETUP
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -20,14 +21,14 @@ class KingTest {
 
     @Test
     fun testFreeMovement() {
-        val movesWhite = whiteKing.getAvailableMoves(listOf(whiteKing))
-        val movesBlack = blackKing.getAvailableMoves(listOf(blackKing))
+        val movesWhite = whiteKing.getAvailableMoves(listOf(whiteKing), DEFAULT_FEN_SETUP)
+        val movesBlack = blackKing.getAvailableMoves(listOf(blackKing), DEFAULT_FEN_SETUP)
 
-        assertEquals(5, movesWhite.size)
+        assertEquals(7, movesWhite.count())
         assertTrue(IntOffset(x = 'D'.code, y = 2) in movesWhite)
         assertTrue(IntOffset(x = 'F'.code, y = 1) in movesWhite)
 
-        assertEquals(5, movesBlack.size)
+        assertEquals(7, movesBlack.count())
         assertTrue(IntOffset(x = 'F'.code, y = 7) in movesBlack)
         assertTrue(IntOffset(x = 'D'.code, y = 8) in movesBlack)
     }
@@ -99,8 +100,8 @@ class KingTest {
             blackPawnFive
         )
 
-        val movesWhite = whiteKing.getAvailableMoves(pieces)
-        val movesBlack = blackKing.getAvailableMoves(pieces)
+        val movesWhite = whiteKing.getAvailableMoves(pieces, DEFAULT_FEN_SETUP)
+        val movesBlack = blackKing.getAvailableMoves(pieces, DEFAULT_FEN_SETUP)
 
         assertTrue(movesWhite.isEmpty())
         assertTrue(movesBlack.isEmpty())
@@ -109,25 +110,33 @@ class KingTest {
     @Test
     fun testCantMoveOutOfBounds() {
 
-        val movesWhite = whiteKing.getAvailableMoves(listOf(whiteKing))
-        val movesBlack = blackKing.getAvailableMoves(listOf(blackKing))
+        val movesWhite = whiteKing.getAvailableMoves(listOf(whiteKing), DEFAULT_FEN_SETUP)
+        val movesBlack = blackKing.getAvailableMoves(listOf(blackKing), DEFAULT_FEN_SETUP)
 
         // Guess I'll just list out every move
-        assertEquals(5, movesWhite.size)
+        assertEquals(7, movesWhite.count())
         assertFalse(IntOffset(x = 'E'.code, y = 3) in movesWhite)
+
         assertTrue(IntOffset(x = 'D'.code, y = 1) in movesWhite)
         assertTrue(IntOffset(x = 'D'.code, y = 2) in movesWhite)
         assertTrue(IntOffset(x = 'E'.code, y = 2) in movesWhite)
         assertTrue(IntOffset(x = 'F'.code, y = 2) in movesWhite)
         assertTrue(IntOffset(x = 'F'.code, y = 1) in movesWhite)
+        // Technically..
+        assertTrue(IntOffset(x = 'G'.code, y = 1) in movesWhite)
+        assertTrue(IntOffset(x = 'C'.code, y = 1) in movesWhite)
 
-        assertEquals(5, movesBlack.size)
+        assertEquals(7, movesBlack.count())
         assertFalse(IntOffset(x = 'E'.code, y = 6) in movesBlack)
+
         assertTrue(IntOffset(x = 'D'.code, y = 8) in movesBlack)
         assertTrue(IntOffset(x = 'D'.code, y = 7) in movesBlack)
         assertTrue(IntOffset(x = 'E'.code, y = 7) in movesBlack)
         assertTrue(IntOffset(x = 'F'.code, y = 7) in movesBlack)
         assertTrue(IntOffset(x = 'F'.code, y = 8) in movesBlack)
+        // Technically..
+        assertTrue(IntOffset(x = 'G'.code, y = 8) in movesBlack)
+        assertTrue(IntOffset(x = 'C'.code, y = 8) in movesBlack)
     }
 
     @Test
@@ -149,8 +158,8 @@ class KingTest {
             blackPawnEnemy
         )
 
-        val movesWhite = whiteKing.getAvailableMoves(pieces)
-        val movesBlack = blackKing.getAvailableMoves(pieces)
+        val movesWhite = whiteKing.getAvailableMoves(pieces, DEFAULT_FEN_SETUP)
+        val movesBlack = blackKing.getAvailableMoves(pieces, DEFAULT_FEN_SETUP)
 
         assertTrue(movesWhite.contains(blackPawnEnemy.position))
         assertTrue(movesBlack.contains(whitePawnEnemy.position))

@@ -47,7 +47,10 @@ class BoardScreen(var board: Board, val modifier: Modifier = Modifier) : Screen 
                         titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     ),
                     title = {
-                        Text("$colorToMove's move", style = MaterialTheme.typography.titleLarge)
+                        Text("$colorToMove's move",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
                     },
                     navigationIcon = {
                         IconButton(onClick = { navigator.pop() }) {
@@ -62,7 +65,6 @@ class BoardScreen(var board: Board, val modifier: Modifier = Modifier) : Screen 
                             Icon(imageVector = Icons.Outlined.Lock, contentDescription = "Copy FEN")
                         }
                     },
-//                    scrollBehavior = scrollBehavior,
                 )
             }
         ) {

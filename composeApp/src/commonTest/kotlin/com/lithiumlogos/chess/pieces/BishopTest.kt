@@ -23,8 +23,8 @@ class BishopTest {
 
     @Test
     fun testFreeMovement() {
-        val movesWhite = whiteBishop.getAvailableMoves(listOf(whiteBishop))
-        val movesBlack = blackBishop.getAvailableMoves(listOf(blackBishop))
+        val movesWhite = whiteBishop.getAvailableMoves(listOf(whiteBishop), "")
+        val movesBlack = blackBishop.getAvailableMoves(listOf(blackBishop), "")
 
         assertEquals(7, movesWhite.size)
         assertTrue(IntOffset(x = 'A'.code, y = 3) in movesWhite)
@@ -66,8 +66,8 @@ class BishopTest {
             blackPawnTwo
         )
 
-        val movesWhite = whiteBishop.getAvailableMoves(pieces)
-        val movesBlack = blackBishop.getAvailableMoves(pieces)
+        val movesWhite = whiteBishop.getAvailableMoves(pieces, "")
+        val movesBlack = blackBishop.getAvailableMoves(pieces, "")
 
         assertTrue(movesWhite.isEmpty())
         assertTrue(movesBlack.isEmpty())
@@ -76,8 +76,8 @@ class BishopTest {
     @Test
     fun testCantMoveOutOfBounds() {
 
-        val movesWhite = whiteBishop.getAvailableMoves(listOf(whiteBishop))
-        val movesBlack = blackBishop.getAvailableMoves(listOf(blackBishop))
+        val movesWhite = whiteBishop.getAvailableMoves(listOf(whiteBishop), "")
+        val movesBlack = blackBishop.getAvailableMoves(listOf(blackBishop), "")
 
         // Guess I'll just list out every move
         assertEquals(7, movesWhite.size)
@@ -120,8 +120,8 @@ class BishopTest {
             blackPawnEnemy
         )
 
-        val movesWhite = whiteBishop.getAvailableMoves(pieces)
-        val movesBlack = blackBishop.getAvailableMoves(pieces)
+        val movesWhite = whiteBishop.getAvailableMoves(pieces, "")
+        val movesBlack = blackBishop.getAvailableMoves(pieces, "")
 
         assertTrue(movesWhite.contains(blackPawnEnemy.position))
         assertTrue(movesBlack.contains(whitePawnEnemy.position))

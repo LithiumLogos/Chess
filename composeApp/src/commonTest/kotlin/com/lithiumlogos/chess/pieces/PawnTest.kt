@@ -18,8 +18,8 @@ class PawnTest {
 
     @Test
     fun testFirstMoveForward() {
-        val movesWhite = whitePawn.getAvailableMoves(listOf(whitePawn))
-        val movesBlack = blackPawn.getAvailableMoves(listOf(blackPawn))
+        val movesWhite = whitePawn.getAvailableMoves(listOf(whitePawn), "")
+        val movesBlack = blackPawn.getAvailableMoves(listOf(blackPawn), "")
 
         assertEquals(2, movesWhite.size)
         assertTrue(IntOffset(x = 'A'.code, y = 3) in movesWhite)
@@ -35,8 +35,8 @@ class PawnTest {
         whitePawn.position = IntOffset(x = 'A'.code, y = 3)
         blackPawn.position = IntOffset(x = 'A'.code, y = 6)
 
-        val movesWhite = whitePawn.getAvailableMoves(listOf(whitePawn))
-        val movesBlack = blackPawn.getAvailableMoves(listOf(blackPawn))
+        val movesWhite = whitePawn.getAvailableMoves(listOf(whitePawn), "")
+        val movesBlack = blackPawn.getAvailableMoves(listOf(blackPawn), "")
 
         assertEquals(1, movesWhite.size)
         assertEquals(IntOffset(x = 'A'.code, y = 4), movesWhite.first())
@@ -64,8 +64,8 @@ class PawnTest {
             whitePawnBlocker
         )
 
-        val movesWhite = whitePawn.getAvailableMoves(pieces)
-        val movesBlack = blackPawn.getAvailableMoves(pieces)
+        val movesWhite = whitePawn.getAvailableMoves(pieces, "")
+        val movesBlack = blackPawn.getAvailableMoves(pieces, "")
 
         assertTrue(movesWhite.isEmpty())
         assertTrue(movesBlack.isEmpty())
@@ -76,8 +76,8 @@ class PawnTest {
         whitePawn.position = IntOffset(x = 'A'.code, y = 8)
         blackPawn.position = IntOffset(x = 'A'.code, y = 1)
 
-        val movesWhite = whitePawn.getAvailableMoves(listOf(whitePawn))
-        val movesBlack = blackPawn.getAvailableMoves(listOf(blackPawn))
+        val movesWhite = whitePawn.getAvailableMoves(listOf(whitePawn), "")
+        val movesBlack = blackPawn.getAvailableMoves(listOf(blackPawn), "")
 
         assertTrue(movesWhite.isEmpty())
         assertTrue(movesBlack.isEmpty())
@@ -102,8 +102,8 @@ class PawnTest {
             blackPawnEnemy
         )
 
-        val movesWhite = whitePawn.getAvailableMoves(pieces)
-        val movesBlack = blackPawn.getAvailableMoves(pieces)
+        val movesWhite = whitePawn.getAvailableMoves(pieces, "")
+        val movesBlack = blackPawn.getAvailableMoves(pieces, "")
 
         assertTrue(movesWhite.contains(blackPawnEnemy.position))
         assertTrue(movesBlack.contains(whitePawnEnemy.position))

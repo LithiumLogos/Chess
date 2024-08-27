@@ -10,6 +10,8 @@ class Pawn (
     override val color: Piece.Color,
     override var position: IntOffset
 ): Piece {
+    override var hasMoved: Boolean = false
+
     override val type:Char = Type
 
     override val drawable: DrawableResource =
@@ -18,10 +20,10 @@ class Pawn (
         else
             Res.drawable.pawn_Black
 
-    override fun getAvailableMoves(pieces: List<Piece>): Set<IntOffset> {
+    override fun getAvailableMoves(pieces: List<Piece>, fenString: String): Set<IntOffset> {
         val isFirstMove = position.y == 2 && color.isWhite || position.y == 7 && color.isBlack
 
-        return getPieceMoves(pieces) {
+        return getPieceMoves(pieces, fenString) {
             straightMoves(
                 movement = if (color.isWhite) StraightMovement.Up else StraightMovement.Down,
                 canCapture = false,

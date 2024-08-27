@@ -11,10 +11,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.IntOffset
 import com.lithiumlogos.chess.pieces.Piece
 
-@Composable
-fun rememberBoard(fenString: String = DEFAULT_FEN_SETUP): Board =
-    remember { Board(fenString) }
-
 @Immutable
 class Board(val fenString: String) {
     private val _pieces = mutableStateListOf<Piece>()
@@ -23,8 +19,6 @@ class Board(val fenString: String) {
 
     init {
         decode(setup).forEach { piece -> _pieces.add(piece) }
-
-        var playerTurn = getCurrentTurn(setup)
     }
 
     var selectedPiece by mutableStateOf<Piece?>(null)
@@ -39,7 +33,7 @@ class Board(val fenString: String) {
     var playerTurn by mutableStateOf(getCurrentTurn(setup))
 
 
-    var currentFEN by mutableStateOf(encode(pieces, playerTurn))
+    var currentFEN by mutableStateOf(encode(pieces, playerTurn, setup))
 
     /*
         User Events
@@ -53,7 +47,7 @@ class Board(val fenString: String) {
             clearSelection()
         } else {
             selectedPiece = piece
-            selectedPieceMoves = piece.getAvailableMoves(pieces = pieces)
+            selectedPieceMoves = piece.getAvailableMoves(pieces = pieces, fenString = currentFEN)
 
         }
     }
@@ -69,6 +63,7 @@ class Board(val fenString: String) {
             }
 
             movePiece(piece = piece, position = IntOffset(x, y))
+            moveRookCastle(piece = piece, position = IntOffset(x, y))
             clearSelection()
             switchPlayerTurn(currentFEN)
             updateFenString(pieces, playerTurn)
@@ -76,6 +71,37 @@ class Board(val fenString: String) {
 
         }
     }
+
+    private fun moveRookCastle(piece: Piece, position: IntOffset) {
+        if (piece.type != 'K') {
+            return
+        }
+
+        val color = piece.color
+        val rookCastle: Piece?
+        val rookCastlePos: IntOffset?
+
+        when (position) {
+            IntOffset('G'.code, 1) -> {
+                rookCastle = _pieces.find { it.type == 'R' && it.color == color && it.position == IntOffset('H'.code, 1) }
+                rookCastlePos = IntOffset('F'.code, 1)}
+            IntOffset('C'.code, 1) -> {
+                rookCastle = _pieces.find { it.type == 'R' && it.color == color && it.position == IntOffset('A'.code, 1) }
+                rookCastlePos = IntOffset('D'.code, 1)}
+            IntOffset('G'.code, 8) -> {
+                rookCastle = _pieces.find { it.type == 'R' && it.color == color && it.position == IntOffset('H'.code, 8) }
+                rookCastlePos = IntOffset('F'.code, 8)}
+            IntOffset('C'.code, 8) -> {
+                rookCastle = _pieces.find { it.type == 'R' && it.color == color && it.position == IntOffset('A'.code, 8) }
+                rookCastlePos = IntOffset('D'.code, 8)}
+            else -> return
+        }
+
+
+        rookCastle?.position = rookCastlePos
+        rookCastle?.hasMoved = true
+    }
+
     /*
         Public Methods
      */
@@ -101,6 +127,7 @@ class Board(val fenString: String) {
         }
 
         piece.position = position
+        piece.hasMoved = true
     }
 
     private fun removePiece(piece: Piece) {
@@ -121,7 +148,8 @@ class Board(val fenString: String) {
     }
 
     private fun updateFenString(pieces: List<Piece>, playerTurn: Piece.Color ) {
-        currentFEN = encode(pieces, playerTurn)
+        val previousState = currentFEN
+        currentFEN = encode(pieces, playerTurn, previousState)
     }
 
 

@@ -8,10 +8,10 @@ class EncoderTest {
     @Test
     fun testDefaultEncoding() {
         val defaultBoard = Board("")
-        val expected = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"
+        val expected = DEFAULT_FEN_SETUP
 
         val defineTurn = Piece.Color.White
-        val result = encode(defaultBoard.pieces, defineTurn)
+        val result = encode(defaultBoard.pieces, defineTurn, DEFAULT_FEN_SETUP)
 
         assertNotEquals(expected, defaultBoard.pieces)
         assertEquals(expected, result)
@@ -19,12 +19,13 @@ class EncoderTest {
 
     @Test
     fun testRandomEncoding() {
-        val fenString = "rnbqk3/4pppp/8/8/8/8/PPP3PP/RN2KB2 b"
+        // Sorta random.... each character means something now
+        val fenString = "1nbqk3/4pppp/8/8/8/8/PPP3PP/1N2KB2 b - - 0 1"
         val randomBoard = Board(fenString)
         val expected = fenString
 
         val defineTurn = Piece.Color.Black
-        val result = encode(randomBoard.pieces, defineTurn)
+        val result = encode(randomBoard.pieces, defineTurn, DEFAULT_FEN_SETUP)
 
         assertNotEquals(expected, randomBoard.pieces)
         assertEquals(expected, result)
