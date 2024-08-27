@@ -27,6 +27,37 @@ interface Piece {
     fun getAvailableMoves(pieces: List<Piece>, fenString: String): Set<IntOffset>
 }
 
+fun Piece.getEnPassantMoves(
+    movement: DiagonalMovement,
+    fenString: String
+) : Set<IntOffset> {
+    val moves = mutableSetOf<IntOffset>()
+    // "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq e4 0 1"
+
+    val availableEn = fenString.split(' ')[3].uppercase()
+    val enTarget: IntOffset
+
+    if (availableEn == "-") {
+        return moves
+    } else {
+        enTarget = convertOffset(availableEn)
+    }
+
+    val enPossibleTarget =
+        when (movement) {
+            DiagonalMovement.UpLeft -> IntOffset(x = position.x - 1, y = position.y + 1)
+            DiagonalMovement.UpRight -> IntOffset(x = position.x + 1, y = position.y + 1)
+            DiagonalMovement.DownRight -> IntOffset(x = position.x + 1, y = position.y - 1)
+            DiagonalMovement.DownLeft -> IntOffset(x = position.x - 1, y = position.y - 1)
+        }
+
+    if (enTarget == enPossibleTarget) {
+        moves.add(enPossibleTarget)
+    }
+
+    return moves
+}
+
 fun Piece.getCastleMoves(
     pieces: List<Piece>,
     fenString: String
@@ -158,8 +189,7 @@ fun Piece.getMoves(
     getPosition: (Int) -> IntOffset,
     canCapture: Boolean = true,
     captureOnly: Boolean = false,
-    maxMovements: Int = 7,
-    fenString: String = ""
+    maxMovements: Int = 7
 ) : Set<IntOffset> {
     val moves = mutableSetOf<IntOffset>()
 
@@ -212,4 +242,10 @@ fun Piece.getLMoves(pieces: List<Piece>) : Set<IntOffset> {
     }
 
     return moves
+}
+
+fun convertOffset(position: String) : IntOffset {
+    val x = position.uppercase()[0].code
+    val y = position[1].digitToInt()
+    return IntOffset(x, y)
 }

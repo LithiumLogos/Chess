@@ -1,6 +1,7 @@
 package com.lithiumlogos.chess.pieces
 
 import androidx.compose.ui.unit.IntOffset
+import com.lithiumlogos.chess.board.DEFAULT_FEN_SETUP
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -18,8 +19,8 @@ class PawnTest {
 
     @Test
     fun testFirstMoveForward() {
-        val movesWhite = whitePawn.getAvailableMoves(listOf(whitePawn), "")
-        val movesBlack = blackPawn.getAvailableMoves(listOf(blackPawn), "")
+        val movesWhite = whitePawn.getAvailableMoves(listOf(whitePawn), DEFAULT_FEN_SETUP)
+        val movesBlack = blackPawn.getAvailableMoves(listOf(blackPawn), DEFAULT_FEN_SETUP)
 
         assertEquals(2, movesWhite.size)
         assertTrue(IntOffset(x = 'A'.code, y = 3) in movesWhite)
@@ -35,8 +36,8 @@ class PawnTest {
         whitePawn.position = IntOffset(x = 'A'.code, y = 3)
         blackPawn.position = IntOffset(x = 'A'.code, y = 6)
 
-        val movesWhite = whitePawn.getAvailableMoves(listOf(whitePawn), "")
-        val movesBlack = blackPawn.getAvailableMoves(listOf(blackPawn), "")
+        val movesWhite = whitePawn.getAvailableMoves(listOf(whitePawn), DEFAULT_FEN_SETUP)
+        val movesBlack = blackPawn.getAvailableMoves(listOf(blackPawn), DEFAULT_FEN_SETUP)
 
         assertEquals(1, movesWhite.size)
         assertEquals(IntOffset(x = 'A'.code, y = 4), movesWhite.first())
@@ -64,8 +65,8 @@ class PawnTest {
             whitePawnBlocker
         )
 
-        val movesWhite = whitePawn.getAvailableMoves(pieces, "")
-        val movesBlack = blackPawn.getAvailableMoves(pieces, "")
+        val movesWhite = whitePawn.getAvailableMoves(pieces, DEFAULT_FEN_SETUP)
+        val movesBlack = blackPawn.getAvailableMoves(pieces, DEFAULT_FEN_SETUP)
 
         assertTrue(movesWhite.isEmpty())
         assertTrue(movesBlack.isEmpty())
@@ -76,8 +77,8 @@ class PawnTest {
         whitePawn.position = IntOffset(x = 'A'.code, y = 8)
         blackPawn.position = IntOffset(x = 'A'.code, y = 1)
 
-        val movesWhite = whitePawn.getAvailableMoves(listOf(whitePawn), "")
-        val movesBlack = blackPawn.getAvailableMoves(listOf(blackPawn), "")
+        val movesWhite = whitePawn.getAvailableMoves(listOf(whitePawn), DEFAULT_FEN_SETUP)
+        val movesBlack = blackPawn.getAvailableMoves(listOf(blackPawn), DEFAULT_FEN_SETUP)
 
         assertTrue(movesWhite.isEmpty())
         assertTrue(movesBlack.isEmpty())
@@ -102,10 +103,23 @@ class PawnTest {
             blackPawnEnemy
         )
 
-        val movesWhite = whitePawn.getAvailableMoves(pieces, "")
-        val movesBlack = blackPawn.getAvailableMoves(pieces, "")
+        val movesWhite = whitePawn.getAvailableMoves(pieces, DEFAULT_FEN_SETUP)
+        val movesBlack = blackPawn.getAvailableMoves(pieces, DEFAULT_FEN_SETUP)
 
         assertTrue(movesWhite.contains(blackPawnEnemy.position))
         assertTrue(movesBlack.contains(whitePawnEnemy.position))
+    }
+
+    @Test
+    fun testEnPassant() {
+        val whitePawn = Pawn(
+            color = Piece.Color.White,
+            position = IntOffset(x = 'E'.code, y = 5)
+        )
+        val fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq d6 0 1"
+
+        val moves = whitePawn.getAvailableMoves(listOf(whitePawn), fenString)
+
+        assertTrue(moves.contains(convertOffset("d6")))
     }
 }

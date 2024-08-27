@@ -10,6 +10,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.IntOffset
 import com.lithiumlogos.chess.pieces.Piece
+import com.lithiumlogos.chess.pieces.convertOffset
+import kotlin.math.abs
 
 @Immutable
 class Board(val fenString: String) {
@@ -35,6 +37,8 @@ class Board(val fenString: String) {
 
     var currentFEN by mutableStateOf(encode(pieces, playerTurn, setup))
 
+    var enPassantTarget by mutableStateOf(IntOffset(0, 0))
+
     /*
         User Events
      */
@@ -54,6 +58,8 @@ class Board(val fenString: String) {
 
     fun moveSelectedPiece(x:Int , y:Int ) {
         selectedPiece?.let { piece ->
+            var enPassant = false
+            var enY = 1
             if (!isAvailableMove(x = x, y = y)) {
                 return
             }
@@ -62,11 +68,20 @@ class Board(val fenString: String) {
                 return
             }
 
+            if (piece.type == 'P') {
+                val currentY = piece.position.y
+                if (abs(currentY - y) == 2) {
+                    enPassant = true
+                    enY = (y + currentY) / 2
+                    enPassantTarget = IntOffset(x,y)
+                }
+            }
+
             movePiece(piece = piece, position = IntOffset(x, y))
             moveRookCastle(piece = piece, position = IntOffset(x, y))
             clearSelection()
             switchPlayerTurn(currentFEN)
-            updateFenString(pieces, playerTurn)
+            updateFenString(pieces, playerTurn, enPassant, IntOffset(x, enY))
             moveIncrementAction++
 
         }
@@ -121,9 +136,18 @@ class Board(val fenString: String) {
 
     private fun movePiece(piece: Piece, position: IntOffset) {
         val targetPiece = pieces.find { it.position == position }
+        val enLook = currentFEN.split(' ')[3]
+        val enCheck = (enLook != "-")
 
         if (targetPiece != null) {
             removePiece(targetPiece)
+        }
+
+        if (enCheck && position == convertOffset(enLook)) {
+            val targetEn = pieces.find { it.position == enPassantTarget && it.type == 'P' }
+            if (targetEn != null) {
+                removePiece(targetEn)
+            }
         }
 
         piece.position = position
@@ -147,9 +171,14 @@ class Board(val fenString: String) {
         } else { Piece.Color.White }
     }
 
-    private fun updateFenString(pieces: List<Piece>, playerTurn: Piece.Color ) {
+    private fun updateFenString(
+        pieces: List<Piece>,
+        playerTurn: Piece.Color,
+        enPassant: Boolean = false,
+        enPos: IntOffset = IntOffset(0, 0)
+    ) {
         val previousState = currentFEN
-        currentFEN = encode(pieces, playerTurn, previousState)
+        currentFEN = encode(pieces, playerTurn, previousState, enPassant, enPos)
     }
 
 

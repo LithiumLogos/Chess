@@ -41,6 +41,16 @@ class Pawn (
                 captureOnly = true,
                 maxMovements = 1
             )
+
+            enPassantMoves(
+                movement = if (color.isWhite) DiagonalMovement.UpRight else DiagonalMovement.DownRight,
+                fenString = fenString
+            )
+
+            enPassantMoves(
+                movement = if (color.isWhite) DiagonalMovement.UpLeft else DiagonalMovement.DownLeft,
+                fenString = fenString
+            )
         }
     }
 

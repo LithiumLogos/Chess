@@ -12,6 +12,18 @@ fun Piece.getPieceMoves(pieces: List<Piece>, fenString: String, block: PieceMove
 class PieceMovementBuilder(private val piece: Piece, private val pieces: List<Piece>, private val fenString: String) {
     private val moves = mutableSetOf<IntOffset>()
 
+    fun enPassantMoves(
+        movement: DiagonalMovement,
+        fenString: String,
+    ) {
+        moves.addAll(
+            piece.getEnPassantMoves(
+                movement = movement,
+                fenString = fenString
+                )
+        )
+    }
+
     fun castleMoves(
         fenString: String
     ) {

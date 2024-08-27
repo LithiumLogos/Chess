@@ -3,7 +3,13 @@ package com.lithiumlogos.chess.board
 import androidx.compose.ui.unit.IntOffset
 import com.lithiumlogos.chess.pieces.Piece
 
-fun encode(pieces: List<Piece>, playerTurn: Piece.Color, previousState: String): String {
+fun encode(
+    pieces: List<Piece>,
+    playerTurn: Piece.Color,
+    previousState: String,
+    enPassant: Boolean = false,
+    enPos: IntOffset = IntOffset.Zero,
+): String {
 
     // Piece Block
     var initialList = mutableListOf(
@@ -38,10 +44,19 @@ fun encode(pieces: List<Piece>, playerTurn: Piece.Color, previousState: String):
 
     // Castle BLock
     val castleString = castleBlock(pieces, previousState)
-    fenString.append(' ').append(castleString)
+    fenString.append(' ').append(castleString).append(' ')
 
-    // TODO: En Passant and Turn's Remaining
-    fenString.append(" - 0 1")
+    // En Passant Block
+    if (enPassant) {
+        val x = (BoardXCoordinates.find { it == enPos.x })?.toChar()?.lowercase()
+        val y = enPos.y
+        fenString.append(x+y)
+    } else {
+        fenString.append('-')
+    }
+
+    // TODO: Turns Remaining
+    fenString.append(" 0 1")
 
     // An empty boardCell is shown as X until cleaned
     return cleanAndCount(fenString)

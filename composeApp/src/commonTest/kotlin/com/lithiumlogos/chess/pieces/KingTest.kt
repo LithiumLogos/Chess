@@ -164,4 +164,22 @@ class KingTest {
         assertTrue(movesWhite.contains(blackPawnEnemy.position))
         assertTrue(movesBlack.contains(whitePawnEnemy.position))
     }
+
+    @Test
+    fun testCastle() {
+        whiteKing
+        val whiteRook = Pawn(
+            color = Piece.Color.White,
+            position = IntOffset(x = 'H'.code, y = 1)
+        )
+        val pieces = listOf(
+            whiteKing,
+            whiteRook
+        )
+        val castlePos = IntOffset(x = 'G'.code, y = 1)
+
+        val moves = whiteKing.getAvailableMoves(pieces, DEFAULT_FEN_SETUP)
+
+        assertTrue(moves.contains(castlePos))
+    }
 }

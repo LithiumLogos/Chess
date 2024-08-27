@@ -12,14 +12,15 @@ main.kt
 
 ## Version
 
+ - 1.1.1: Added En Passant, Updated Tests
  - 1.1.0: Added Castling...
  - 1.0.1: Added FEN encoder and tests, along with extra support for FEN.  Added UI and basic Api calling.
  - 1.0.0: Basic board setup and piece movement.  Starting positions rendered using FEN.
 
 ## TODO
- - En Passant
  - Dark/Light Theme
  - Turn Counter
+ - Ability to win/lose...
 
 ## Notes
 ```
