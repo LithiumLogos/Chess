@@ -12,6 +12,7 @@ main.kt
 
 ## Version
 
+ - 1.1.2: Added Checkmate. Removed impossible moves
  - 1.1.1: Added En Passant, Updated Tests
  - 1.1.0: Added Castling...
  - 1.0.1: Added FEN encoder and tests, along with extra support for FEN.  Added UI and basic Api calling.

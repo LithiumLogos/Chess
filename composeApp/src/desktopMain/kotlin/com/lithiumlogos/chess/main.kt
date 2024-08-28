@@ -8,8 +8,9 @@ import androidx.compose.ui.window.application
 fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
-        title = "ChessGame",
-        state = WindowState(width = 713.dp, height = 800.dp)
+        title = "Chess",
+        state = WindowState(width = 713.dp, height = 800.dp),
+        resizable = false
     ) {
         App()
     }

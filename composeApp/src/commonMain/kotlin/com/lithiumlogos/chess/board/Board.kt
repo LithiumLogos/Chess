@@ -39,9 +39,96 @@ class Board(val fenString: String) {
 
     var enPassantTarget by mutableStateOf(IntOffset(0, 0))
 
+    var checkMate by mutableStateOf(false)
+
+    /*
+    Identify Check
+
+
+    Identify CheckMate
+    Prevent move if king is in check at end of turn
+    generate all moves possible on your turn if king is in check
+
+    star turn
+    if player.isInCheck
+        if player.king.hasNoLegalMoves && player.cannotProtectKing
+            game.checkMate(player)
+
+    isInCheck
+        for p in opponent.pieces
+            if p.canAttack(player.king)
+                isInCheck = True
+
+     */
+
     /*
         User Events
      */
+
+    private fun isInCheck(pieces: List<Piece> = _pieces) : Boolean {
+        val opponentColor = if (playerTurn.isWhite) Piece.Color.Black else Piece.Color.White
+        val opponentPiecesThatCanCheck = mutableListOf<Piece>()
+        val playerKing = pieces.find { it.type == 'K' && it.color != opponentColor}
+
+        pieces.forEach { piece ->
+            if (piece.color == opponentColor) {
+                val moves = piece.getAvailableMoves(pieces, currentFEN)
+                if (moves.contains(playerKing?.position)) {
+                    opponentPiecesThatCanCheck.add(piece)
+                }
+            }
+        }
+
+        return opponentPiecesThatCanCheck.size > 0
+    }
+
+    private fun wouldBeCheck(selectedPiece: Piece?, x: Int, y: Int) : Boolean {
+        var result = false
+        val tempBoard = Board(currentFEN)
+        var tempPieces = tempBoard.pieces
+        val tempSelection = tempPieces.find { it.position == selectedPiece?.position }
+        val tempTarget = tempPieces.find { it.position == IntOffset(x, y) }
+        tempSelection?.let { piece ->
+            if (tempTarget != null) {
+                tempPieces = tempBoard.pieces.minus(tempTarget)
+            }
+            tempMovePiece(piece = piece, position = IntOffset(x, y), tempBoard)
+            result = isInCheck(tempPieces)
+        }
+
+        return result
+    }
+
+    private fun checkMate(): Boolean {
+        if (!isInCheck()) { return false }
+
+        val playerColor = if (playerTurn.isWhite) Piece.Color.White else Piece.Color.Black
+
+        pieces.forEach { piece ->
+            if (piece.color == playerColor) {
+                val moves = piece.getAvailableMoves(pieces, currentFEN)
+                for (move in moves) {
+                    if (!wouldBeCheck(piece, move.x, move.y)) {
+                        println("${piece.type}: (${BoardXCoordinates.find { it == move.x }?.toChar()}, ${move.y})")
+                        return false
+                    }
+                }
+            }
+        }
+
+        return true
+    }
+
+    private fun tempMovePiece(piece: Piece, position: IntOffset, tempBoard: Board) {
+        val targetPiece = tempBoard.pieces.find { it.position == position }
+
+        if (targetPiece != null) {
+            tempBoard.pieces.minus(targetPiece)
+        }
+
+        piece.position = position
+        piece.hasMoved = true
+    }
 
     fun selectPiece(piece: Piece) {
         if (piece.color !== playerTurn) {
@@ -57,6 +144,12 @@ class Board(val fenString: String) {
     }
 
     fun moveSelectedPiece(x:Int , y:Int ) {
+        if (checkMate()) {
+            println("!!!CHECK MATE!!!")
+            checkMate = true
+            return
+        }
+
         selectedPiece?.let { piece ->
             var enPassant = false
             var enY = 1
@@ -77,6 +170,11 @@ class Board(val fenString: String) {
                 }
             }
 
+            if (wouldBeCheck(selectedPiece, x, y)) {
+                println("KING IN CHECK!")
+                return
+            }
+
             movePiece(piece = piece, position = IntOffset(x, y))
             moveRookCastle(piece = piece, position = IntOffset(x, y))
             clearSelection()
@@ -88,7 +186,7 @@ class Board(val fenString: String) {
     }
 
     private fun moveRookCastle(piece: Piece, position: IntOffset) {
-        if (piece.type != 'K') {
+        if (isInCheck() || piece.type != 'K' || piece.hasMoved) {
             return
         }
 
@@ -140,12 +238,14 @@ class Board(val fenString: String) {
         val enCheck = (enLook != "-")
 
         if (targetPiece != null) {
+            println("NORMAL CAPTURE")
             removePiece(targetPiece)
         }
 
-        if (enCheck && position == convertOffset(enLook)) {
+        if (enCheck && position == convertOffset(enLook) && piece.type == 'P') {
             val targetEn = pieces.find { it.position == enPassantTarget && it.type == 'P' }
             if (targetEn != null) {
+                println("EN PASSANT?!")
                 removePiece(targetEn)
             }
         }
@@ -155,6 +255,7 @@ class Board(val fenString: String) {
     }
 
     private fun removePiece(piece: Piece) {
+        println("$piece")
         _pieces.remove(piece)
     }
 
