@@ -42,26 +42,6 @@ class Board(val fenString: String) {
     var checkMate by mutableStateOf(false)
 
     /*
-    Identify Check
-
-
-    Identify CheckMate
-    Prevent move if king is in check at end of turn
-    generate all moves possible on your turn if king is in check
-
-    star turn
-    if player.isInCheck
-        if player.king.hasNoLegalMoves && player.cannotProtectKing
-            game.checkMate(player)
-
-    isInCheck
-        for p in opponent.pieces
-            if p.canAttack(player.king)
-                isInCheck = True
-
-     */
-
-    /*
         User Events
      */
 
@@ -171,15 +151,22 @@ class Board(val fenString: String) {
             }
 
             if (wouldBeCheck(selectedPiece, x, y)) {
-                println("KING IN CHECK!")
+                println("CHECK")
                 return
             }
 
-            movePiece(piece = piece, position = IntOffset(x, y))
+            // "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+            val halfMoveClock = currentFEN.split(" ")[4].toInt()
+            if (halfMoveClock >= 100) {
+                println("!!!DRAW!!!")
+                return
+            }
+
+            val pieceRemoved = movePiece(piece = piece, position = IntOffset(x, y))
             moveRookCastle(piece = piece, position = IntOffset(x, y))
             clearSelection()
             switchPlayerTurn(currentFEN)
-            updateFenString(pieces, playerTurn, enPassant, IntOffset(x, enY))
+            updateFenString(pieces, playerTurn, enPassant, IntOffset(x, enY), pieceRemoved)
             moveIncrementAction++
 
         }
@@ -232,26 +219,28 @@ class Board(val fenString: String) {
         return if (turnString == "w") Piece.Color.White else Piece.Color.Black
     }
 
-    private fun movePiece(piece: Piece, position: IntOffset) {
+    private fun movePiece(piece: Piece, position: IntOffset) : Boolean {
+        var pieceRemoved = false
         val targetPiece = pieces.find { it.position == position }
         val enLook = currentFEN.split(' ')[3]
         val enCheck = (enLook != "-")
 
         if (targetPiece != null) {
-            println("NORMAL CAPTURE")
+            pieceRemoved = true
             removePiece(targetPiece)
         }
 
         if (enCheck && position == convertOffset(enLook) && piece.type == 'P') {
             val targetEn = pieces.find { it.position == enPassantTarget && it.type == 'P' }
             if (targetEn != null) {
-                println("EN PASSANT?!")
+                pieceRemoved = true
                 removePiece(targetEn)
             }
         }
 
         piece.position = position
         piece.hasMoved = true
+        return pieceRemoved
     }
 
     private fun removePiece(piece: Piece) {
@@ -276,10 +265,11 @@ class Board(val fenString: String) {
         pieces: List<Piece>,
         playerTurn: Piece.Color,
         enPassant: Boolean = false,
-        enPos: IntOffset = IntOffset(0, 0)
+        enPos: IntOffset = IntOffset(0, 0),
+        pieceRemoved: Boolean = false
     ) {
         val previousState = currentFEN
-        currentFEN = encode(pieces, playerTurn, previousState, enPassant, enPos)
+        currentFEN = encode(pieces, playerTurn, previousState, enPassant, enPos, pieceRemoved)
     }
 
 

@@ -22,7 +22,7 @@ class EncoderTest {
         // Sorta random.... each character means something now
         val fenString = "1nbqk3/4pppp/8/8/8/8/PPP3PP/1N2KB2 b - - 0 1"
         val randomBoard = Board(fenString)
-        val expected = fenString
+        val expected = "1nbqk3/4pppp/8/8/8/8/PPP3PP/1N2KB2 b - - 1 1"
 
         val defineTurn = Piece.Color.Black
         val result = encode(randomBoard.pieces, defineTurn, DEFAULT_FEN_SETUP)

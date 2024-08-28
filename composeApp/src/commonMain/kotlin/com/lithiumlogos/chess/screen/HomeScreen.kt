@@ -80,7 +80,11 @@ class HomeScreen(var fenString: String = "") : Screen {
                         )
                     },
                     label = {
-                        Text(text = "Start")
+                        var textB = "Load"
+                        if (text1.isEmpty()) {
+                            textB = "Start"
+                        }
+                        Text(text = textB)
                     }
                 )
             }

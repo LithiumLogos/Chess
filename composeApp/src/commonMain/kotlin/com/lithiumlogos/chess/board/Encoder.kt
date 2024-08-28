@@ -9,8 +9,8 @@ fun encode(
     previousState: String,
     enPassant: Boolean = false,
     enPos: IntOffset = IntOffset.Zero,
+    pieceRemoved: Boolean = false,
 ): String {
-
     // Piece Block
     var initialList = mutableListOf(
         "XXXXXXXX",
@@ -33,10 +33,13 @@ fun encode(
         initialList[positionY] = sb.toString()
     }
 
-    val fenString = StringBuilder("")
+    val pieceString = StringBuilder("")
 
-    initialList.forEach { fenString.append("$it/") }
-    fenString.setLength(fenString.length - 1)
+    initialList.forEach { pieceString.append("$it/") }
+    pieceString.setLength(pieceString.length - 1)
+    val currentPieces = cleanAndCount(pieceString)
+
+    val fenString = StringBuilder(currentPieces)
 
     // Turn Block
     val turnChar:Char = if (playerTurn.isWhite) 'w' else 'b'
@@ -55,13 +58,27 @@ fun encode(
         fenString.append('-')
     }
 
-    // TODO: Turns Remaining
-    fenString.append(" 0 1")
+    // Turn Block
+    var halfMoveClock = previousState.split(" ")[4].toInt()
+    val previousPieces = previousState.split(" ")[0]
+    val updateNeeded = previousPieces != currentPieces
+    if (pieceRemoved) {
+        fenString.append(" 0 ")
+    } else if (updateNeeded) {
+        fenString.append(" ${halfMoveClock + 1} ")
+    } else {
+        fenString.append(" $halfMoveClock ")
+    }
+
+    var fullMoveClock = previousState.split(" ").last().toInt()
+    if (playerTurn.isWhite && updateNeeded) {
+        fullMoveClock++
+    }
+    fenString.append("$fullMoveClock")
 
     // An empty boardCell is shown as X until cleaned
-    return cleanAndCount(fenString)
+    return fenString.toString()
 }
-
 
 private fun cleanAndCount(fenString: StringBuilder): String {
     val result = fenString.toString().replace(Regex("X+")) {

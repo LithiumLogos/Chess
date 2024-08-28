@@ -15,8 +15,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBarDefaults
@@ -55,14 +55,14 @@ class BoardScreen(var board: Board, val modifier: Modifier = Modifier) : Screen 
                     navigationIcon = {
                         IconButton(onClick = { navigator.pop() }) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                imageVector = Icons.Outlined.Home,
                                 contentDescription = "Exit"
                             )
                         }
                     },
                     actions = {
                         IconButton(onClick = { navigator.push(HomeScreen(board.currentFEN)) }) {
-                            Icon(imageVector = Icons.Outlined.Lock, contentDescription = "Copy FEN")
+                            Icon(imageVector = Icons.Outlined.Share, contentDescription = "Copy FEN")
                         }
                     },
                 )
