@@ -9,19 +9,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.IntOffset
+import com.lithiumlogos.chess.ai_decision_making.RandomMove
 import com.lithiumlogos.chess.pieces.Piece
 import com.lithiumlogos.chess.pieces.convertOffset
 import kotlin.math.abs
 
 @Immutable
-class Board(val fenString: String) {
+class Board(val fenString: String, private val playerColor: String = "White") {
     private val _pieces = mutableStateListOf<Piece>()
     val pieces get() = _pieces.toList()
     val setup = fenString.ifBlank { DEFAULT_FEN_SETUP }
+    val computerColor = if (playerColor == "White") Piece.Color.Black else Piece.Color.White
 
     init {
         decode(setup).forEach { piece -> _pieces.add(piece) }
     }
+
+
 
     var selectedPiece by mutableStateOf<Piece?>(null)
         private set
@@ -40,6 +44,24 @@ class Board(val fenString: String) {
     var enPassantTarget by mutableStateOf(IntOffset(0, 0))
 
     var checkMate by mutableStateOf(false)
+
+    /*
+        Network Decision-Making
+     */
+
+    private fun networkMakeMove(board: Board, computerColor: Piece.Color) {
+        if (computerColor != playerTurn) {
+            return
+        } else {
+            val move = RandomMove(board, computerColor).decision()
+            val desiredPiece = move.piece
+            val desiredMove = move.toSquare
+
+            println("LiLY: ${move.notation}")
+            selectPiece(desiredPiece)
+            moveSelectedPiece(desiredMove.x, desiredMove.y)
+        }
+    }
 
     /*
         User Events
@@ -168,7 +190,7 @@ class Board(val fenString: String) {
             switchPlayerTurn(currentFEN)
             updateFenString(pieces, playerTurn, enPassant, IntOffset(x, enY), pieceRemoved)
             moveIncrementAction++
-
+            networkMakeMove(this, computerColor)
         }
     }
 

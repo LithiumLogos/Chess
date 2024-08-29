@@ -1,10 +1,6 @@
 package com.lithiumlogos.chess.pieces
 
 import androidx.compose.ui.unit.IntOffset
-import com.lithiumlogos.chess.board.BoardXCoordinates
-import com.lithiumlogos.chess.board.BoardYCoordinates
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
