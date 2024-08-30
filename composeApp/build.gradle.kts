@@ -7,6 +7,13 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.testLogger)
     alias(libs.plugins.kotlinxSerialization)
+    alias(libs.plugins.dataframe)
+    alias(libs.plugins.ksp)
+}
+
+repositories {
+    mavenCentral()
+    google()
 }
 
 kotlin {
@@ -36,6 +43,13 @@ kotlin {
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.transitions)
 
+            // Data Science?
+            implementation(libs.dataframe)
+            implementation(libs.multik.core)
+            implementation(libs.multik.default)
+            implementation(libs.dagger)
+
+
         }
 
         commonTest.dependencies {
@@ -46,6 +60,7 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
         }
+
     }
 }
 

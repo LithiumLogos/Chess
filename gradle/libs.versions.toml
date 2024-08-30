@@ -8,6 +8,10 @@ adarshr = "4.0.0"
 ktor = "2.3.11"
 voyager = "1.1.0-beta02"
 logBack = "1.7.32"
+kdl = "0.13.1"
+multik = "0.2.3"
+gKsp = "2.0.20-1.0.24"
+dag = "2.51.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -23,6 +27,11 @@ ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
 log-back = { group = "org.slf4j", name = "slf4j-android", version.ref = "logBack" }
+multik-core = { module = "org.jetbrains.kotlinx:multik-core", version.ref = "multik" }
+multik-default = { module = "org.jetbrains.kotlinx:multik-default", version.ref = "multik" }
+dagger = { module = "com.google.dagger:dagger-compiler", version.ref = "dag"}
+dataframe = { group = "org.jetbrains.kotlinx", name = "dataframe", version.ref = "kdl"}
+
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
@@ -30,3 +39,5 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 testLogger = { id = "com.adarshr.test-logger", version.ref = "adarshr"}
 kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+dataframe = { id = "org.jetbrains.kotlinx.dataframe", version.ref = "kdl"}
+ksp = { id = "com.google.devtools.ksp", version.ref = "gKsp"}

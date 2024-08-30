@@ -12,6 +12,9 @@ import androidx.compose.ui.unit.IntOffset
 import com.lithiumlogos.chess.ai_decision_making.RandomMove
 import com.lithiumlogos.chess.pieces.Piece
 import com.lithiumlogos.chess.pieces.convertOffset
+import java.io.File
+import javax.sound.sampled.AudioSystem
+import javax.sound.sampled.Clip
 import kotlin.math.abs
 
 @Immutable
@@ -21,11 +24,13 @@ class Board(val fenString: String, private val playerColor: String = "White") {
     val setup = fenString.ifBlank { DEFAULT_FEN_SETUP }
     val computerColor = if (playerColor == "White") Piece.Color.Black else Piece.Color.White
 
+    private val moveclip = AudioSystem.getClip()
+    private val audioInputStream = AudioSystem.getAudioInputStream(File(MOVE_SOUND))
+
     init {
         decode(setup).forEach { piece -> _pieces.add(piece) }
+        moveclip.open(audioInputStream)
     }
-
-
 
     var selectedPiece by mutableStateOf<Piece?>(null)
         private set
@@ -49,6 +54,8 @@ class Board(val fenString: String, private val playerColor: String = "White") {
         Network Decision-Making
      */
 
+    private val computerIsWhite = if (computerColor.isWhite) networkMakeMove(this, computerColor) else null
+
     private fun networkMakeMove(board: Board, computerColor: Piece.Color) {
         if (computerColor != playerTurn) {
             return
@@ -57,6 +64,7 @@ class Board(val fenString: String, private val playerColor: String = "White") {
             val desiredPiece = move.piece
             val desiredMove = move.toSquare
 
+//            Thread.sleep(clip.microsecondLength / 1000)
             println("LiLY: ${move.notation}")
             selectPiece(desiredPiece)
             moveSelectedPiece(desiredMove.x, desiredMove.y)
@@ -66,6 +74,15 @@ class Board(val fenString: String, private val playerColor: String = "White") {
     /*
         User Events
      */
+
+    private fun playSound(clip: Clip) {
+        if (clip.isRunning) {
+            clip.stop()
+        }
+
+        clip.framePosition = 0
+        clip.start()
+    }
 
     private fun isInCheck(pieces: List<Piece> = _pieces) : Boolean {
         val opponentColor = if (playerTurn.isWhite) Piece.Color.Black else Piece.Color.White
@@ -152,6 +169,7 @@ class Board(val fenString: String, private val playerColor: String = "White") {
             return
         }
 
+
         selectedPiece?.let { piece ->
             var enPassant = false
             var enY = 1
@@ -184,12 +202,14 @@ class Board(val fenString: String, private val playerColor: String = "White") {
                 return
             }
 
-            val pieceRemoved = movePiece(piece = piece, position = IntOffset(x, y))
             moveRookCastle(piece = piece, position = IntOffset(x, y))
+            val pieceRemoved = movePiece(piece = piece, position = IntOffset(x, y))
             clearSelection()
             switchPlayerTurn(currentFEN)
             updateFenString(pieces, playerTurn, enPassant, IntOffset(x, enY), pieceRemoved)
             moveIncrementAction++
+
+            playSound(moveclip)
             networkMakeMove(this, computerColor)
         }
     }
@@ -216,9 +236,10 @@ class Board(val fenString: String, private val playerColor: String = "White") {
             IntOffset('C'.code, 8) -> {
                 rookCastle = _pieces.find { it.type == 'R' && it.color == color && it.position == IntOffset('A'.code, 8) }
                 rookCastlePos = IntOffset('D'.code, 8)}
-            else -> return
+            else -> {
+                return
+            }
         }
-
 
         rookCastle?.position = rookCastlePos
         rookCastle?.hasMoved = true

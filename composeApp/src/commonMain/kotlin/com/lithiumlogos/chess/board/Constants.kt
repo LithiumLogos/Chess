@@ -12,3 +12,7 @@ val BoardYCoordinates = List(8) {
 
 // Default Setup in Forsyth-Edwards Notation (FEN)
 const val DEFAULT_FEN_SETUP = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+
+
+// Sounds
+const val MOVE_SOUND = "src/commonMain/resources/sounds/move_sound.wav"

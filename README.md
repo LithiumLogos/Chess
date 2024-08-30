@@ -31,3 +31,5 @@ git push -u origin main"
 ```
 
 - UI Extension: [Voyager](https://voyager.adriel.cafe/)
+- Multidimensional array library for Kotlin: [Multik](https://github.com/Kotlin/multik)
+- Data Analysis: [DataFrame](https://kotlinlang.org/docs/data-analysis-overview.html#jupyter-notebook-with-kotlin-kernel)
